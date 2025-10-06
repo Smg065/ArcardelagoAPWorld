@@ -29,7 +29,7 @@ class ArcardelagoWorld(World):
     Arcardelago is a game that uses items at it's locations as in-game items.
     """
     game : str = "Arcardelago"
-    version : str = "V0.1"
+    version : str = "V0.2"
     web = ArcardelagoWeb()
     topology_present = True
     options_dataclass = ArcardelagoOptions
@@ -41,14 +41,10 @@ class ArcardelagoWorld(World):
         item_name_to_id[each_key] = each_item.acid
     #Locations (Cards)
     location_name_to_id = {}
-    cards_per_color : int = 20
-    for each_card in range(1, cards_per_color + 1):
-        for each_color in card_colors:
-            id : int = (card_colors.index(each_color) * cards_per_color) + each_card
-            location_name_to_id[each_color + " Card " + str(each_card)] = id
-
-    #def generate_early(self):
-    #    self.multiworld.player_types[self.player] = SlotType.spectator
+    for each_color in card_colors:
+        for each_card in range(0, 100):
+            id : int = (card_colors.index(each_color) * 100) + each_card
+            location_name_to_id[each_color + " Card " + str(each_card + 1)] = id
 
     def generate_early(self):
         player = self.player
@@ -68,21 +64,110 @@ class ArcardelagoWorld(World):
         multiworld.completion_condition[player] = lambda state: state.has("Victory", player)
         set_rule(all_bosses, lambda state: state.has_all(list(spheres_table.keys()), player))
 
-        #Colored Spheres
+        #Create the 6 regions
         color_to_region : Dict[str, Region] = {}
         for color_name in self.card_colors:
-            each_sphere_region : Region = Region(color_name + " Region", player, multiworld)
-            color_to_region[color_name] = each_sphere_region
-            menu_region.connect(each_sphere_region, "Got " + color_name + " Sphere", lambda state, sphere_color = color_name: state.has(sphere_color + " Sphere", player))
-            multiworld.regions.append(each_sphere_region)
+            each_region : Region = Region(color_name + " Region", player, multiworld)
+            color_to_region[color_name] = each_region
+            multiworld.regions.append(each_region)
+            #Spawning sphere is
+            if self.spawning_sphere.startswith(color_name):
+                menu_region.connect(each_region, color_name + "Spawn")
         
-        #Create the Cards
-        for location_name, location_id in self.location_name_to_id.items():
-            origin_region : Region = color_to_region[location_name.split(" ")[0]]
-            each_card : ArcardelagoLocation = ArcardelagoLocation(player, location_name, location_id, origin_region)
-            origin_region.locations.append(each_card)
+        #Get the sphere order
+        self.generate_world_map_order(menu_region)
+        #Gate regions based on that order
+        for region_color, region_connections in self.world_order.items():
+            #The key of the graph node is the origin you're starting at
+            from_region = color_to_region[region_color]
+            for each_connection in region_connections:
+                #Each value at the key is the destination it leads to
+                to_region = color_to_region[each_connection]
+                #Go from one to the other, requiring the sphere as the key
+                from_region.connect(to_region, "Unlock " + each_connection + " Gate", lambda state, sphere_color = each_connection: state.has(sphere_color + " Sphere", self.player))
+        
+        #Create all the cards
+        for region_index, region_color in enumerate(color_to_region):
+            origin_region : Region = color_to_region[region_color]
+            #For the total number there are per region
+            for card_number in range(self.options.cards_per_region):
+                card_id = (region_index * 100) + card_number
+                each_card : ArcardelagoLocation = ArcardelagoLocation(player, region_color + " Card " + str(card_number + 1), card_id, origin_region)
+                origin_region.locations.append(each_card)
             
         return super().generate_early()
+
+    def generate_world_map_order(self, menu_region : Region):
+        #Sphere order starts with your spawning sphere
+        self.world_order : dict[str, list[str]] = {}
+        
+        #Make sure all the logic keys exist
+        for each_color in self.card_colors:
+            self.world_order[each_color] = []
+
+        #From the spheres not yet in sphere order
+        colors_remaining : list[str] = self.card_colors.copy()
+        #Account for the color you spawn in
+        spawn_color = self.spawning_sphere.split(" ")[0]
+        colors_remaining.remove(spawn_color)
+
+        #Branching
+        branching_node = spawn_color
+        adjacency_orgins = [spawn_color, spawn_color]
+
+        #How many logical branches can exist from here?
+        while len(colors_remaining) > 0:
+            #You need to select a node
+            color_selected : str
+            
+            #Find adjacencies
+            adjacencies : list[str] = []
+            for each_orgin in adjacency_orgins:
+                index = self.card_colors.index(each_orgin)
+                adjacencies.extend(
+                    [self.card_colors[(index + 5) % len(self.card_colors)],
+                    self.card_colors[(index + 1) % len(self.card_colors)]]
+                )
+
+            #Trim to only valid adjacencies
+            valid_adjacencies : list[str] = []
+            valid_warpables : list[str] = []
+            for each_color in colors_remaining:
+                if each_color in adjacencies:
+                    valid_adjacencies.append(each_color)
+                else:
+                    valid_warpables.append(each_color)
+
+            #Only worry about adjacenies if there are ones, and if there's non-adjacent options
+            if len(valid_adjacencies) > 0 and len(valid_warpables) > 0:
+                #Pick
+                if self.random.randint(1, self.options.adjacency_odds) != 1:
+                    #Adjacent weighted
+                    color_selected = self.random.choice(valid_adjacencies)
+                else:
+                    #Warps are less common
+                    color_selected = self.random.choice(valid_warpables)
+            else:
+                #Pick a color at random from the remaining if valid's aren't a concern
+                color_selected = self.random.choice(colors_remaining)
+                
+
+            #Assign into dictionary, creating a new list when needed
+            self.world_order[branching_node].append(color_selected)
+            #This is no longer a sphere in the selectable pool
+            colors_remaining.remove(color_selected)
+            
+            #Use the last line as refrence for what we're doing
+            adjacency_orgins[0] = branching_node
+            adjacency_orgins[1] = color_selected
+            #Reuse the last branching node a fifth of the time
+            if self.random.randint(1, self.options.branching_odds) != 1:
+                branching_node = color_selected
+        
+        #Inform the spoiler log of the logic construction here
+        for base_color, color_connections in self.world_order.items():
+            for each_index, each_connection in enumerate(color_connections):
+                menu_region.add_event(base_color + " Sphere Requirement " + str(1 + each_index), each_connection + " Gate")
 
     def create_item(self, name: str) -> Item:
         item_data = all_items_table[name]
@@ -111,7 +196,7 @@ class ArcardelagoWorld(World):
             for _ in range(all_items_table[each_item].qty):
                 self.multiworld.itempool.append(self.create_item(each_item))
                 core_item_count += 1
-        for _ in range(120 - core_item_count):
+        for _ in range((self.options.cards_per_region * 6) - core_item_count):
             self.multiworld.itempool.append(self.create_item("Filler"))
 
     def locations_of_slots_items(self) -> list[list[int]]:
@@ -127,8 +212,13 @@ class ArcardelagoWorld(World):
     def fill_slot_data(self) -> Dict[str, Any]:
         options = {}
         options["difficulty"] = self.options.difficulty.value
+        options["cards_per_region"] = self.options.cards_per_region.value
+        options["map_radius"] = self.options.map_radius.value
+        options["node_percentages"] = self.options.node_percentages.value
         enemies = self.locations_of_slots_items()
         options["enemies"] = enemies
+        options["spawning_sphere"] = self.spawning_sphere
+        options["world_order"] = self.world_order
         options["player_name"] = self.multiworld.player_name[self.player]
         options["seed"] = self.random.randint(-6500000, 6500000)
         options["version"] = self.version
