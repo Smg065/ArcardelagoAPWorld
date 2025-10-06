@@ -44,7 +44,7 @@ class ArcardelagoWorld(World):
     for each_color in card_colors:
         for each_card in range(0, 100):
             id : int = (card_colors.index(each_color) * 100) + each_card
-            location_name_to_id[each_color + " Card " + str(each_card + 1)] = id
+            location_name_to_id[each_color + " Card " + str(each_card + 1)] = id + 65000
 
     def generate_early(self):
         player = self.player
@@ -92,7 +92,7 @@ class ArcardelagoWorld(World):
             #For the total number there are per region
             for card_number in range(self.options.cards_per_region):
                 card_id = (region_index * 100) + card_number
-                each_card : ArcardelagoLocation = ArcardelagoLocation(player, region_color + " Card " + str(card_number + 1), card_id, origin_region)
+                each_card : ArcardelagoLocation = ArcardelagoLocation(player, region_color + " Card " + str(card_number + 1), card_id + 65000, origin_region)
                 origin_region.locations.append(each_card)
             
         return super().generate_early()
