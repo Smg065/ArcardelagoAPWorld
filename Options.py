@@ -40,6 +40,23 @@ class MapRadius(Range):
     range_end = 100
     default = 25
 
+class TilesPerPip(Range):
+    """How many map tiles need to spawn for 1 map pip to spawn. Default 25.
+    9 = 1 Tile Radius of buffer space
+    25 = 2 Tile Radius of buffer space
+    49 = 3 Tile Radius of buffer space
+    81 = 4 Tile Radius of buffer space
+    """
+    range_start = 9
+    range_end = 100
+
+    one_radius = 9
+    two_radius = 25
+    three_radius = 49
+    four_radius = 81
+    
+    default = 25
+
 class NodePercentages(OptionCounter):
     """The percentage of various map nodes. Must add up to 100.
     Home will add an extra node to the location you spawn at.
@@ -76,4 +93,5 @@ class ArcardelagoOptions(PerGameCommonOptions):
     branching_odds : BranchingOdds
     cards_per_region : CardsPerRegion
     map_radius : MapRadius
+    tiles_per_pip : TilesPerPip
     node_percentages : NodePercentages

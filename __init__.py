@@ -215,6 +215,7 @@ class ArcardelagoWorld(World):
         options["cards_per_region"] = self.options.cards_per_region.value
         options["map_radius"] = self.options.map_radius.value
         options["node_percentages"] = self.options.node_percentages.value
+        options["tiles_per_pip"] = self.options.tiles_per_pip.value
         enemies = self.locations_of_slots_items()
         options["enemies"] = enemies
         options["spawning_sphere"] = self.spawning_sphere
