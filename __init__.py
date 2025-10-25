@@ -3,7 +3,7 @@ import logging
 
 from BaseClasses import Item, Location, Region, Tutorial, ItemClassification
 from worlds.generic.Rules import set_rule
-from .ItemPool import spheres_table, all_items_table
+from .ItemPool import spheres_table, all_items_table, progression_table, filler_table, useful_table, trap_table
 from .Options import ArcardelagoOptions
 
 from ..AutoWorld import World, WebWorld
@@ -29,7 +29,7 @@ class ArcardelagoWorld(World):
     Arcardelago is a game that uses items at it's locations as in-game items.
     """
     game : str = "Arcardelago"
-    version : str = "V0.2"
+    version : str = "V0.3"
     web = ArcardelagoWeb()
     topology_present = True
     options_dataclass = ArcardelagoOptions
@@ -54,9 +54,9 @@ class ArcardelagoWorld(World):
         menu_region : Region = Region("Menu", player, multiworld)
         multiworld.regions.append(menu_region)
         self.spawning_sphere = self.random.choice(list(spheres_table.keys()))
-        progusefulItem = self.create_item(self.spawning_sphere)
-        multiworld.push_precollected(progusefulItem)
-
+        spawning_sphere = self.create_item(self.spawning_sphere)
+        multiworld.push_precollected(spawning_sphere)
+        self.final_boss_origin = self.random.choice(list(multiworld.player_name.values()))
         #Victory Condition
         all_bosses : ArcardelagoLocation = ArcardelagoLocation(player, "All Bosses", None, menu_region)
         all_bosses.place_locked_item(self.create_event("Victory"))
@@ -177,9 +177,14 @@ class ArcardelagoWorld(World):
             #Spheres are Proguseful
             case "Sphere":
                 item_classification = ItemClassification.progression | ItemClassification.useful
-                #ItemClassification.useful
             case "Filler":
                 item_classification = ItemClassification.filler
+            case "Progression":
+                item_classification = ItemClassification.progression
+            case "Trap":
+                item_classification = ItemClassification.trap
+            case "Useful":
+                item_classification = ItemClassification.useful
         item_output = ArcardelagoItem(name, item_classification, item_id, self.player)
         return item_output
 
@@ -187,17 +192,37 @@ class ArcardelagoWorld(World):
         return ArcardelagoItem(name, ItemClassification.progression, None, self.player)
 
     def create_items(self) -> None:
-        spawn_items : list = []
-        spawn_items.extend(list(spheres_table.keys()))
-        spawn_items.remove(self.spawning_sphere)
+        core_items : list = []
+        core_items.extend(list(spheres_table.keys()))
+        core_items.extend(list(progression_table.keys()))
+        core_items.remove(self.spawning_sphere)
         core_item_count : int = 0
+        
         #Core Items
-        for each_item in spawn_items:
+        for each_item in core_items:
             for _ in range(all_items_table[each_item].qty):
                 self.multiworld.itempool.append(self.create_item(each_item))
                 core_item_count += 1
-        for _ in range((self.options.cards_per_region * 6) - core_item_count):
-            self.multiworld.itempool.append(self.create_item("Filler"))
+        
+        #The filler, useful and trap items that scale
+        noncore_count = (self.options.cards_per_region * 6) - core_item_count
+        #Noncore Spawning Garunteed
+        noncore_items : list[ArcardelagoItem] = []
+        for item_name, item_percent in self.options.item_percentages.value.items():
+            to_spawn = (item_percent * noncore_count) // 100
+            for _ in range(to_spawn):
+                noncore_items.append(self.create_item(item_name))
+        #Noncore Spawning Variation
+        while len(noncore_items) < noncore_count:
+            chosen_weight = self.random.randint(0, 100)
+            random_item : str
+            for item_name, item_percent in self.options.item_percentages.value.items():
+                chosen_weight -= item_percent
+                random_item = item_name
+                if chosen_weight < 0:
+                    break
+            noncore_items.append(self.create_item(random_item))
+        self.multiworld.itempool.extend(noncore_items)
 
     def locations_of_slots_items(self) -> list[list[int]]:
         myItems : list[Item] = self.get_items_from(self.player)
@@ -218,6 +243,7 @@ class ArcardelagoWorld(World):
         options["tiles_per_pip"] = self.options.tiles_per_pip.value
         enemies = self.locations_of_slots_items()
         options["enemies"] = enemies
+        options["final_boss_origin"] = self.final_boss_origin
         options["spawning_sphere"] = self.spawning_sphere
         options["world_order"] = self.world_order
         options["player_name"] = self.multiworld.player_name[self.player]

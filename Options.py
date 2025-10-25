@@ -86,6 +86,56 @@ class NodePercentages(OptionCounter):
         "Enemy" : 40
     }
 
+class ItemPercentages(OptionCounter):
+    """The percentage of non-core items.
+    Filler:
+    Default Card:       A statless 1/1 unreleasable card.                                               Default 00%
+	Money:              10 dollars.                                                                     Default 00%
+    Booster Pack:       A pack of 3 cards, giving you 1 choice from it.                                 Default 00%
+    Perk:               A random perk.                                                                  Default 00%
+
+    Useful:
+    Ghost Stamp:        A stamp that makes a released card able to show up again.                       Default 00%
+    Harmony Stamp:      A stamp that befriends an enemy card.                                           Default 00%
+    Square Stamp:       A stamp that makes a card boost up 1 square step.                               Default 00%
+    Steel Stamp:        A stamp that prevents a card from self-releasing.                               Default 00%
+    Gold Stamp:         A stamp that lets you release a card at any time for a treasure encounter.      Default 00%
+    House Upgrade:      Start with more items upon death.                                               Default 00%
+
+    Trap:
+    Unstable Trap:      Every trap card you own has a 50% chance of releasing.                          Default 00%
+    Fog Trap:           You can't see the enemies in your next battle.                                  Default 00%
+    Release Trap:       A random card you own will be released.                                         Default 00%
+    Trade Down Trap:    Your highest quality card will be exchanged for one of a lower quality.         Default 00%
+    Stackless Trap:     You can't stack cards in your next battle.                                      Default 00%
+    Blind Trap:         You can't see what cards are available in your next shop, event or treasure.    Default 00%
+    """
+    min = 0
+    max = 100
+    default = {
+        #52%
+        "Default Card"      :   13,
+        "Money"             :   13,
+        "Booster Pack"      :   13,
+        "Perk"              :   13,
+        
+        #30%
+        "Ghost Stamp"       :   5,
+        "Harmony Stamp"     :   5,
+        "Square Stamp"      :   5,
+        "Steel Stamp"       :   5,
+        "Gold Stamp"        :   5,
+        "House Upgrade"     :   5,
+        
+        #18%
+        "Unstable Trap"     :   3,
+        "Fog Trap"          :   3,
+        "Release Trap"      :   3,
+        "Trade Down Trap"   :   3,
+        "Stackless Trap"    :   3,
+        "Blind Trap"        :   3
+    }
+
 @dataclass
 class ArcardelagoOptions(PerGameCommonOptions):
     difficulty : Difficulty
@@ -95,3 +145,4 @@ class ArcardelagoOptions(PerGameCommonOptions):
     map_radius : MapRadius
     tiles_per_pip : TilesPerPip
     node_percentages : NodePercentages
+    item_percentages : ItemPercentages
