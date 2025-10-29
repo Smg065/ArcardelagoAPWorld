@@ -32,12 +32,15 @@ filler_table = {
 }
 # 65X1XXX
 useful_table = {
+	#Stamps
 	"Steel Stamp"			:	ItemData(BASE_ID + USEFUL_ID + RED_ID, -1, "Useful", ""),
+	#"Hint Stamp"           :   Use the Hint Point system for this
 	"Harmony Stamp"			:	ItemData(BASE_ID + USEFUL_ID + GREEN_ID, -1, "Useful", ""),
-	"House Upgrade"			:	ItemData(BASE_ID + USEFUL_ID + VIOLET_ID, -1, "Useful", ""),
 	"Ghost Stamp"			:	ItemData(BASE_ID + USEFUL_ID + ORANGE_ID, -1, "Useful", ""),
 	"Square Stamp"			:	ItemData(BASE_ID + USEFUL_ID + BLUE_ID, -1, "Useful", ""),
-	"Gold Stamp"			:	ItemData(BASE_ID + USEFUL_ID + YELLOW_ID, -1, "Useful", "")
+	"Gold Stamp"			:	ItemData(BASE_ID + USEFUL_ID + YELLOW_ID, -1, "Useful", ""),
+	#Non-Stamps
+	"House Upgrade"			:	ItemData(BASE_ID + USEFUL_ID + VIOLET_ID + 1, -1, "Useful", "")
 }
 # 65X2XXX
 progression_table = {
@@ -59,7 +62,7 @@ spheres_table = {
 }
 # 65X4XXX
 trap_table = {
-	#Every trap card you own has a 50% chance of releasing
+	#Every trap card in your deck has a 50% chance of releasing
 	"Unstable Trap"			:	ItemData(BASE_ID + TRAP_ID + RED_ID, -1, "Trap", ""),
 	#You cannot see the enemies in your next battle
 	"Fog Trap"				:	ItemData(BASE_ID + TRAP_ID + GREEN_ID, -1, "Trap", ""),

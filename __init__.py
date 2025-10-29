@@ -41,9 +41,9 @@ class ArcardelagoWorld(World):
         item_name_to_id[each_key] = each_item.acid
     #Locations (Cards)
     location_name_to_id = {}
-    for each_color in card_colors:
+    for color_index, each_color in enumerate(card_colors):
         for each_card in range(0, 100):
-            id : int = (card_colors.index(each_color) * 100) + each_card
+            id : int = (color_index * 100) + each_card
             location_name_to_id[each_color + " Card " + str(each_card + 1)] = id + 65000
 
     def generate_early(self):
