@@ -228,7 +228,7 @@ class ArcardelagoWorld(World):
         myItems : list[Item] = self.get_items_from(self.player)
         output : list[list[int | str]] = []
         for each_item in myItems:
-            output.append([each_item.location.player, each_item.location.name, each_item.flags])
+            output.append([each_item.location.player, each_item.location.name, each_item.flags, each_item.code])
         return output
 
     def get_items_from(self, target_player) -> list[Item]:
