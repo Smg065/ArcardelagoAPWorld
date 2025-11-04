@@ -29,7 +29,7 @@ class ArcardelagoWorld(World):
     Arcardelago is a game that uses items at it's locations as in-game items.
     """
     game : str = "Arcardelago"
-    version : str = "V0.3"
+    version : str = "V0.4"
     web = ArcardelagoWeb()
     topology_present = True
     options_dataclass = ArcardelagoOptions
@@ -228,7 +228,7 @@ class ArcardelagoWorld(World):
         myItems : list[Item] = self.get_items_from(self.player)
         output : list[list[int | str]] = []
         for each_item in myItems:
-            output.append([each_item.location.player, each_item.location.name, each_item.flags, each_item.code])
+            output.append([each_item.location.player, each_item.location.name, each_item.flags, each_item.code, each_item.location.address])
         return output
 
     def get_items_from(self, target_player) -> list[Item]:
