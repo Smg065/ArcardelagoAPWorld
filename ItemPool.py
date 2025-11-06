@@ -28,7 +28,13 @@ filler_table = {
 	"Default Card"			:	ItemData(BASE_ID + FILLER_ID, -1, "Filler", ""),
 	"Money"					:	ItemData(BASE_ID + FILLER_ID + 1, -1, "Filler", ""),
 	"Booster Pack"			:	ItemData(BASE_ID + FILLER_ID + 2, -1, "Filler", ""),
-	"Perk"					:	ItemData(BASE_ID + FILLER_ID + 3, -1, "Filler", "")
+	"Perk"					:	ItemData(BASE_ID + FILLER_ID + 3, -1, "Filler", ""),
+	"Random Card"			:	ItemData(BASE_ID + FILLER_ID + 4, -1, "Filler", ""),
+	"Scout"					:	ItemData(BASE_ID + FILLER_ID + 5, -1, "Filler", ""),
+	"Sheild"				:	ItemData(BASE_ID + FILLER_ID + 6, -1, "Filler", ""),
+	"Treasure"				:	ItemData(BASE_ID + FILLER_ID + 7, -1, "Filler", ""),
+	"Burger"				:	ItemData(BASE_ID + FILLER_ID + 8, -1, "Filler", ""),
+	"Extra Life"			:	ItemData(BASE_ID + FILLER_ID + 9, -1, "Filler", "")
 }
 # 65X1XXX
 useful_table = {

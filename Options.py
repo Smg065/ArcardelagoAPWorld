@@ -93,6 +93,12 @@ class ItemPercentages(OptionCounter):
 	Money:              10 dollars.                                                                     Default 00%
     Booster Pack:       A pack of 3 cards, giving you 1 choice from it.                                 Default 00%
     Perk:               A random perk.                                                                  Default 00%
+    Random Card         A random card from your cardpool.
+    Scout		        Scouts 1 location in your game. Picks unaccessable cards first.
+    Sheild	            Protects you from the next incoming trap.
+    Treasure	        Starts a treasure event.
+    Burger              Burger.
+    Extra Life          Lets you lose a battle without losing your deck.
 
     Useful:
     Ghost Stamp:        A stamp that makes a released card able to show up again.                       Default 00%
@@ -118,6 +124,12 @@ class ItemPercentages(OptionCounter):
         "Money"             :   13,
         "Booster Pack"      :   13,
         "Perk"              :   13,
+        "Random Card"		:   0,
+        "Scout"				:   0,
+        "Sheild"			:   0,
+        "Treasure"			:   0,
+        "Burger"			:   0,
+        "Extra Life"		:   0,
         
         #30%
         "Ghost Stamp"       :   5,
