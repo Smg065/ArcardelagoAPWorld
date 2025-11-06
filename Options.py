@@ -95,7 +95,7 @@ class ItemPercentages(OptionCounter):
     Perk:               A random perk.                                                                  Default 00%
     Random Card         A random card from your cardpool.
     Scout		        Scouts 1 location in your game. Picks unaccessable cards first.
-    Sheild	            Protects you from the next incoming trap.
+    Shield	            Protects you from the next incoming trap.
     Treasure	        Starts a treasure event.
     Burger              Burger.
     Extra Life          Lets you lose a battle without losing your deck.
@@ -126,7 +126,7 @@ class ItemPercentages(OptionCounter):
         "Perk"              :   13,
         "Random Card"		:   0,
         "Scout"				:   0,
-        "Sheild"			:   0,
+        "Shield"			:   0,
         "Treasure"			:   0,
         "Burger"			:   0,
         "Extra Life"		:   0,
