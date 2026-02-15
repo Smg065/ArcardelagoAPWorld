@@ -85,10 +85,15 @@ class ArcardelagoWorld(World):
             #The key of the graph node is the origin you're starting at
             from_region = color_to_region[region_color]
             for each_connection in region_connections:
+                #Create the requirements
+                generated_requirements = [each_connection + " Sphere"]
                 #Each value at the key is the destination it leads to
                 to_region = color_to_region[each_connection]
+                #The region this is in potentially prevents you from getting there via obstacles
+                if each_connection in self.breaker_priority[region_color]:
+                    generated_requirements.append(self.color_to_breaker(each_connection))
                 #Go from one to the other, requiring the sphere as the key
-                from_region.connect(to_region, "Unlock " + each_connection + " Gate", lambda state, sphere_color = each_connection: state.has(sphere_color + " Sphere", self.player))
+                from_region.connect(to_region, "Unlock " + each_connection + " Gate", lambda state, requires = generated_requirements: state.has_all(requires, self.player))
         
         #Create all the cards
         for region_index, region_color in enumerate(color_to_region):
@@ -173,12 +178,17 @@ class ArcardelagoWorld(World):
             for each_index, each_connection in enumerate(color_connections):
                 menu_region.add_event(base_color + " Sphere Requirement " + str(1 + each_index), each_connection + " Gate")
 
+    def color_to_breaker(self, in_color : str):
+        #Color to breaker types
+        progression_table.keys()[self.card_colors.index(in_color)]
+
     def get_obstacles_priorities(self):
         self.breaker_priority : dict[str, list[str]] = {}
         for each_region, region_gates in self.world_order.items():
             blocking_gates : list[str] = []
             for each_gate in region_gates:
-                each_gate
+                if self.random.randint(0, 1) == 1:
+                    blocking_gates.append(each_gate)
             self.breaker_priority[each_region] = blocking_gates
 
     def create_item(self, name: str) -> Item:
