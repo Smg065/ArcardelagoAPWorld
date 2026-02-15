@@ -40,6 +40,13 @@ class MapRadius(Range):
     range_end = 100
     default = 25
 
+class TrapReleasePercent(Range):
+    """The odds that a trap will release itself at the end of a battle. Default 10.
+    """
+    range_start = 0
+    range_end = 100
+    default = 10
+
 class TilesPerPip(Range):
     """How many map tiles need to spawn for 1 map pip to spawn. Default 25.
     9 = 1 Tile Radius of buffer space
@@ -158,3 +165,4 @@ class ArcardelagoOptions(PerGameCommonOptions):
     tiles_per_pip : TilesPerPip
     node_percentages : NodePercentages
     item_percentages : ItemPercentages
+    trap_release_chance : TrapReleasePercent

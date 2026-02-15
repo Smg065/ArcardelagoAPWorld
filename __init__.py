@@ -76,6 +76,10 @@ class ArcardelagoWorld(World):
         
         #Get the sphere order
         self.generate_world_map_order(menu_region)
+
+        #Get the breakers priority
+        self.get_obstacles_priorities()
+
         #Gate regions based on that order
         for region_color, region_connections in self.world_order.items():
             #The key of the graph node is the origin you're starting at
@@ -169,6 +173,14 @@ class ArcardelagoWorld(World):
             for each_index, each_connection in enumerate(color_connections):
                 menu_region.add_event(base_color + " Sphere Requirement " + str(1 + each_index), each_connection + " Gate")
 
+    def get_obstacles_priorities(self):
+        self.breaker_priority : dict[str, list[str]] = {}
+        for each_region, region_gates in self.world_order.items():
+            blocking_gates : list[str] = []
+            for each_gate in region_gates:
+                each_gate
+            self.breaker_priority[each_region] = blocking_gates
+
     def create_item(self, name: str) -> Item:
         item_data = all_items_table[name]
         item_classification = None
@@ -244,6 +256,8 @@ class ArcardelagoWorld(World):
         enemies = self.locations_of_slots_items()
         options["enemies"] = enemies
         options["final_boss_origin"] = self.final_boss_origin
+        options["trap_release_chance"] = self.options.trap_release_chance.value
+        options["breaker_priority"] = self.breaker_priority
         options["spawning_sphere"] = self.spawning_sphere
         options["world_order"] = self.world_order
         options["player_name"] = self.multiworld.player_name[self.player]
