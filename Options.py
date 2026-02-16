@@ -41,11 +41,11 @@ class MapRadius(Range):
     default = 25
 
 class TrapReleasePercent(Range):
-    """The odds that a trap will release itself at the end of a battle. Default 10.
+    """The odds that a trap will release itself at the end of a battle. Default 13.
     """
     range_start = 0
     range_end = 100
-    default = 10
+    default = 13
 
 class TilesPerPip(Range):
     """How many map tiles need to spawn for 1 map pip to spawn. Default 25.

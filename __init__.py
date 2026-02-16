@@ -180,7 +180,7 @@ class ArcardelagoWorld(World):
 
     def color_to_breaker(self, in_color : str):
         #Color to breaker types
-        progression_table.keys()[self.card_colors.index(in_color)]
+        return list(progression_table.keys())[self.card_colors.index(in_color)]
 
     def get_obstacles_priorities(self):
         self.breaker_priority : dict[str, list[str]] = {}
